@@ -1,0 +1,85 @@
+
+-- Script of the database to run with the UnivasComercial project.
+-- The UnivasComercial project uses a database with the name "Comercial".
+-- If you want to change the name of this database, please, remember to update the name os the database in the java class to avoid bugs in the connection.
+-- Author: Luiz Eduardo da Costa
+-- Email: costaeduardoluiz@gmail.com
+-- Last update: 30/03/2016
+
+
+
+-- Creating the sequences
+CREATE SEQUENCE sequence_itensvendidos;
+CREATE SEQUENCE sequence_setor;
+CREATE SEQUENCE sequence_vendas;
+
+
+-- Creating the tables
+
+
+CREATE TABLE setores
+(
+  codigo integer NOT NULL DEFAULT nextval('sequence_setor'),
+  descricao character varying(30),
+  CONSTRAINT pk_setor PRIMARY KEY (codigo)
+);
+
+
+
+
+CREATE TABLE produtos
+(
+  codigo integer NOT NULL,
+  nome character varying(50) NOT NULL,
+  setor integer NOT NULL,
+  preco_custo real NOT NULL,
+  margem_lucro real NOT NULL,
+  preco_venda real NOT NULL,
+  fornecedor character varying(50),
+  estoque_minimo integer,
+  em_estoque integer NOT NULL,
+  observacao character varying(500),
+  CONSTRAINT pk_produto PRIMARY KEY (codigo),
+  CONSTRAINT fk_setor_produto FOREIGN KEY (setor)
+      REFERENCES setores (codigo) 
+);
+
+
+
+
+CREATE TABLE forma_pagamento
+(
+  codigo integer NOT NULL,
+  descricao character varying(20),
+  CONSTRAINT pk_formapagamento PRIMARY KEY (codigo)
+);
+
+
+CREATE TABLE vendas
+(
+  codigo integer NOT NULL DEFAULT nextval('sequence_vendas'),
+  data character varying(10),
+  hora character varying(10),
+  total real,
+  forma_pagamento integer NOT NULL,
+  CONSTRAINT pk_venda PRIMARY KEY (codigo),
+  CONSTRAINT fk_forma_pagamento FOREIGN KEY (forma_pagamento)
+      REFERENCES forma_pagamento (codigo) 
+);
+
+
+
+
+
+CREATE TABLE itens_vendidos
+(
+  codigo integer NOT NULL DEFAULT nextval('sequence_itensvendidos'),
+  cod_venda integer NOT NULL,
+  cod_produto integer NOT NULL,
+  quantidade integer NOT NULL,
+  CONSTRAINT pk_itens_vendidos PRIMARY KEY (codigo),
+  CONSTRAINT fk_cod_produto FOREIGN KEY (cod_produto)
+      REFERENCES produtos (codigo),
+  CONSTRAINT fk_cod_venda FOREIGN KEY (cod_venda)
+      REFERENCES vendas (codigo) 
+);
